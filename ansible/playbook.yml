@@ -37,7 +37,7 @@
           version: '3.8'
           services:
             web-app:
-              image: n1ckl3ss/sharai-zachet:latest
+              image: soowhyy/sharai-app:latest
               ports:
                 - "8000:8000"
               restart: always

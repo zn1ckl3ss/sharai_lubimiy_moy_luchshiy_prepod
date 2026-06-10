@@ -1,12 +1,15 @@
 version: '3.8'
+name: sharai
 
 services:
+  # Наше FastAPI приложение
   web-app:
-    image: n1ckl3ss/sharai-zachet:latest
+    image: soowhyy/sharai-app:latest # Ссылка на твой Docker Hub
     ports:
       - "8000:8000"
     restart: always
 
+  # Сервис сбора метрик Prometheus
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -16,13 +19,14 @@ services:
       - "9090:9090"
     restart: always
 
+  # Сервис визуализации Grafana
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
     ports:
       - "3000:3000"
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin # Пароль для первого входа
     restart: always
     volumes:
       - grafana-storage:/var/lib/grafana
