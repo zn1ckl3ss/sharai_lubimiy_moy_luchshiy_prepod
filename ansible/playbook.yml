@@ -1,0 +1,80 @@
+---
+- name: Deploy FastAPI and Monitoring to VPS
+  hosts: webservers
+  become: yes
+  gather_facts: no
+
+  tasks:
+    - name: Wait for SSH to be available
+      wait_for_connection:
+        timeout: 30
+
+    - name: Install Docker and Docker Compose
+      apt:
+        name:
+          - docker.io
+          - docker-compose-v2
+        state: present
+        update_cache: yes
+
+    - name: Create project directory
+      file:
+        path: /app/sharai
+        state: directory
+        mode: '0755'
+
+    - name: Create monitoring directory
+      file:
+        path: /app/sharai/monitoring
+        state: directory
+        mode: '0755'
+
+    # ВМЕСТО COPY ИСПОЛЬЗУЕМ BLOCK_IN_FILE ИЛИ COPY С CONTENT
+    - name: Create docker-compose.yml on server
+      copy:
+        dest: /app/sharai/docker-compose.yml
+        content: |
+          version: '3.8'
+          services:
+            web-app:
+              image: soowhyy/sharai-app:latest
+              ports:
+                - "8000:8000"
+              restart: always
+            prometheus:
+              image: prom/prometheus:latest
+              container_name: prometheus
+              volumes:
+                - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+              ports:
+                - "9090:9090"
+              restart: always
+            grafana:
+              image: grafana/grafana:latest
+              container_name: grafana
+              ports:
+                - "3000:3000"
+              environment:
+                - GF_SECURITY_ADMIN_PASSWORD=admin
+              restart: always
+              volumes:
+                - grafana-storage:/var/lib/grafana
+          volumes:
+            grafana-storage:
+
+    - name: Create prometheus.yml on server
+      copy:
+        dest: /app/sharai/monitoring/prometheus.yml
+        content: |
+          global:
+            scrape_interval: 15s
+          scrape_configs:
+            - job_name: 'fastapi-app'
+              scrape_interval: 5s
+              static_configs:
+                - targets: ['web-app:8000']
+
+    - name: Deploy fresh app container without downtime
+      shell: "docker compose up -d --pull always --no-deps web-app"
+      args:
+        chdir: /app/sharai
