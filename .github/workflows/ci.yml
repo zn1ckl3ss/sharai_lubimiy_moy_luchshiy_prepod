@@ -43,7 +43,7 @@ jobs:
 
     # 5. Запуск тестов через pytest
     - name: Run Tests with Pytest
-      run: pytest
+      run: PYTHONPATH=. pytest
       
       # 6. Настройка Terraform
     - name: Setup Terraform
