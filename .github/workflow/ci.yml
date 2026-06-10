@@ -44,3 +44,21 @@ jobs:
     # 5. Запуск тестов через pytest
     - name: Run Tests with Pytest
       run: pytest
+      
+      # 6. Настройка Terraform
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.5.7
+
+    # 7. Инициализация Terraform
+    - name: Terraform Init
+      run: terraform init
+      working-directory: ./terraform
+
+    # 8. Запуск Terraform с передачей секретного ключа
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
+      working-directory: ./terraform
+      env:
+        TF_VAR_ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
