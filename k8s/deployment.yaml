@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-deployment
+  namespace: sharai-project
+spec:
+  replicas: 2 # Запустить 2 копии приложения для надежности
+  selector:
+    matchLabels:
+      app: fastapi-app
+  template:
+    metadata:
+      labels:
+        app: fastapi-app
+    spec:
+      containers:
+      - name: fastapi-container
+        image: soowhyy/sharai-app:latest # Твой образ на Docker Hub
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
