@@ -1,0 +1,34 @@
+version: '3.8'
+name: sharai_lubimiy_moy_luchshiy_prepod
+services:
+  # Наше FastAPI приложение
+  web-app:
+    image: soowhyy/sharai-app:latest # Ссылка на твой Docker Hub
+    ports:
+      - "8000:8000"
+    restart: always
+
+  # Сервис сбора метрик Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    restart: always
+
+  # Сервис визуализации Grafana
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin # Пароль для первого входа (поменяешь)
+    restart: always
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
+volumes:
+  grafana-storage:
