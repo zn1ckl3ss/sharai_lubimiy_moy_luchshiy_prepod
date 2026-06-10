@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: fastapi-container
-        image: n1ckl3ss/sharai-app:latest # Твой образ на Docker Hub
+        image: n1ckl3ss/sharai-zachet:latest # Твой образ на Docker Hub
         imagePullPolicy: Always
         ports:
         - containerPort: 8000

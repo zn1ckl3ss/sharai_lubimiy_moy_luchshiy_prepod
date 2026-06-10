@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   web-app:
-    image: n1ckl3ss/sharai-app:latest
+    image: n1ckl3ss/sharai-zachet:latest
     ports:
       - "8000:8000"
     restart: always
